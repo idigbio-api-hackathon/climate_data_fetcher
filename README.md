@@ -27,9 +27,9 @@ occurred that month.
 ##Required column names:
 * location → string of specimens' locality to be geocoded
 * date → requires format YYYY-MM-DD OR columns named:
-* Year → YYYY
-* Month → MM
-* Day → DD
+* year → YYYY
+* month → MM
+* day → DD
 * **Note:**
   * Any other fields/columns will be unmodified and placed back in the edited files
 
@@ -49,12 +49,11 @@ occurred that month.
 
 
 ##How to run:
-python climateFetcher.py [filename]
-ex: python climateFetcher.py exsample.csv
+* python climateFetcher.py [filename]
+* ex: python climateFetcher.py exsample.csv
 
 
 ##Detailed description of each script:
-
 
 ###climateFetcher.py:
 The script contains the main function that calls all the scripts within the library folder. 
