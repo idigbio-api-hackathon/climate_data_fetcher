@@ -14,36 +14,43 @@ max, min, avg, pncp variables as well as the number of days of missing climate o
 occurred that month.
 
 ##Required libraries:
-*geopy
-*json
-*numpy
-*pandas
-*scipy
-*urllib
-*urllib2
-
+'''
+geopy
+json
+numpy
+pandas
+scipy
+urllib
+urllib2
+'''
 ##Required column names:
-*location → string of specimens' locality to be geocoded
-*date → requires format YYYY-MM-DD OR columns named:
-*Year → YYYY
-*Month → MM
-*Day → DD
-***Note:**
-**Any other fields/columns will be unmodified and placed back in the edited files
-
+'''
+location → string of specimens' locality to be geocoded
+date → requires format YYYY-MM-DD OR columns named:
+Year → YYYY
+Month → MM
+Day → DD
+**Note:**
+Any other fields/columns will be unmodified and placed back in the edited files
+'''
 ##Structure of files:
-
-*climateFetcher.py
-**library folder
-***acisRequest.py
-***dateConverter.py
-***errorCheck.py
-***googleGeocoder.py
-***__init__.py
-***cKDTree.py
-**output folder
-***acis_station_ID.csv
-***specimen_results.csv
+'''
+climateFetcher.py
+|
+|--------library folder
+|                    |
+|                    |--------acisRequest.py
+|                    |--------dateConverter.py
+|                    |--------errorCheck.py
+|                    |--------googleGeocoder.py
+|                    |--------__init__.py
+|                    |--------cKDTree.py
+|
+|-------------output folder
+                     |
+                     |--------acis_station_ID.csv
+                     |--------specimen_results.csv
+'''
 
 ##How to run:
 python climateFetcher.py [filename]
@@ -81,27 +88,29 @@ The script contains the main function that calls all the scripts within the libr
 **weatherStations()** → Requests all the weather stations in New England, dates of operation, and much more meta data. Converts these dates to Julian dates  
 
 **retrieveMlyClimateData(df_dates, start, end)** → Within each specimen, it iterates though each of the nearest neighbor weather stations in chronological order until it finds a specimen's collection date within the dates of operation of its nearest neighbor. If “IC” is returned, the date on the record was incomplete. If “NFS” is returned, there were no nearest neighbors found for that record. If “M” is returned, it means there is missing data from ASIC.
-*Returns:
-**mly_date → monthly date used for the fetching from ACIS data services
-**mly_maxt → monthly max temp (F)
-**mly_maxt_nmppm → number of missing points per month. Only for the monthly columns
-**mly_mint → monthly min temp (F)
-**mly_mint_nmppm → number of missing points per month. Only for the monthly columns 
-**mly_avgt → monthly avg temp (F)
-**mly_avgt_nmppm → number of missing points per month. Only for the monthly columns
-**mly_pcpn → monthly precipitation (inches)
-**mly_pcpn_nmppm → number of missing points per month. Only for the monthly columns
-**mly_id_use → monthly UID used for the fetching from ACIS data services
-
+'''
+Returns:
+mly_date → monthly date used for the fetching from ACIS data services
+mly_maxt → monthly max temp (F)
+mly_maxt_nmppm → number of missing points per month. Only for the monthly columns
+mly_mint → monthly min temp (F)
+mly_mint_nmppm → number of missing points per month. Only for the monthly columns 
+mly_avgt → monthly avg temp (F)
+mly_avgt_nmppm → number of missing points per month. Only for the monthly columns
+mly_pcpn → monthly precipitation (inches)
+mly_pcpn_nmppm → number of missing points per month. Only for the monthly columns
+mly_id_use → monthly UID used for the fetching from ACIS data services
+'''
 **retrieveDlyClimateData(df_dates, start, end)** → Within each specimen, it iterates though each of the nearest neighbor weather stations in chronological order until it finds a specimen's collection date within the dates of operation of its nearest neighbor. If “IC” is returned, the date on the record was incomplete. If “NFS” is returned, there were no nearest neighbors found for that record. If “M” is returned, it means there is missing data from ASIC.
-*returns:
-**dly_date → daily date used for the fetching from ACIS data services
-**dly_maxt → daily max temp (F)
-**dly_mint → daily min temp (F)
-**dly_avgt → daily avg temp (F)
-**dly_pcpn → daily precipitation (inches)
-**dly_id_use → daily UID used for fetching from ACIS data services
-**callASIC()** → Makes the request to ACIS data services requesting all the metadata of the nearest neighbors weather station.
-**concatenateDlyAndMly()** → concatenate the daily and monthly results to the original dataset.
-**CwsList()** → create a list of nearest neighbors weather stations to make it easier to iterate through the list. 
-
+'''
+returns:
+dly_date → daily date used for the fetching from ACIS data services
+dly_maxt → daily max temp (F)
+dly_mint → daily min temp (F)
+dly_avgt → daily avg temp (F)
+dly_pcpn → daily precipitation (inches)
+dly_id_use → daily UID used for fetching from ACIS data services
+callASIC()** → Makes the request to ACIS data services requesting all the metadata of the nearest neighbors weather station.
+concatenateDlyAndMly()** → concatenate the daily and monthly results to the original dataset.
+CwsList()** → create a list of nearest neighbors weather stations to make it easier to iterate through the list. 
+'''
