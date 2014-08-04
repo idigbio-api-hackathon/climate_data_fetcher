@@ -13,6 +13,10 @@ and precipitation (pcpn) variables. If only the month of collection is known, it
 max, min, avg, pncp variables as well as the number of days of missing climate observations
 occurred that month.
 
+![GitHub Logo](/figure/Weather_methodology.2.png)
+Format: ![Alt Text](url)
+
+
 ##Required libraries:
 * geopy
 * json
