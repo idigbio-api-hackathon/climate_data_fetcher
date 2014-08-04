@@ -85,7 +85,7 @@ The script contains the main function that calls all the scripts within the libr
 
 * **retrieveMlyClimateData(df_dates, start, end)** → Within each specimen, it iterates though each of the nearest neighbor weather stations in chronological order until it finds a specimen's collection date within the dates of operation of its nearest neighbor. If “IC” is returned, the date on the record was incomplete. If “NFS” is returned, there were no nearest neighbors found for that record. If “M” is returned, it means there is missing data from ASIC.
 
-  * returns:
+  * **returns:**
     * mly_date → monthly date used for the fetching from ACIS data services
     * mly_maxt → monthly max temp (F)
     * mly_maxt_nmppm → number of missing points per month. Only for the monthly columns
@@ -99,7 +99,7 @@ The script contains the main function that calls all the scripts within the libr
 
 * **retrieveDlyClimateData(df_dates, start, end)** → Within each specimen, it iterates though each of the nearest neighbor weather stations in chronological order until it finds a specimen's collection date within the dates of operation of its nearest neighbor. If “IC” is returned, the date on the record was incomplete. If “NFS” is returned, there were no nearest neighbors found for that record. If “M” is returned, it means there is missing data from ASIC.
 
-  * returns:
+  * **returns:**
     * dly_date → daily date used for the fetching from ACIS data services
     * dly_maxt → daily max temp (F)
     * dly_mint → daily min temp (F)
