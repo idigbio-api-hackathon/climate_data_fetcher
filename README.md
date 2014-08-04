@@ -14,8 +14,6 @@ max, min, avg, pncp variables as well as the number of days of missing climate o
 occurred that month.
 
 ![GitHub Logo](/figure/Weather_methodology.2.png)
-Format: ![Alt Text](url)
-
 
 ##Required libraries:
 * geopy
@@ -32,8 +30,8 @@ Format: ![Alt Text](url)
 * Year → YYYY
 * Month → MM
 * Day → DD
-  * **Note:**
-* Any other fields/columns will be unmodified and placed back in the edited files
+* **Note:**
+  * Any other fields/columns will be unmodified and placed back in the edited files
 
 ##Structure of files:
 
