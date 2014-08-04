@@ -14,15 +14,14 @@ max, min, avg, pncp variables as well as the number of days of missing climate o
 occurred that month.
 
 ##Required libraries:
-'''
-geopy
-json
-numpy
-pandas
-scipy
-urllib
-urllib2
-'''
+* geopy
+* json
+* numpy
+* pandas
+* scipy
+* urllib
+* urllib2
+
 ##Required column names:
 '''
 location → string of specimens' locality to be geocoded
