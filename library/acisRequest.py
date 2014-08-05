@@ -12,6 +12,8 @@ except ImportError :
 
 #Gathering all climate stations for New England and adjacement states from ACIS Data Services. Transforms the json file into dataframe and then return it
 def weatherStations():
+  '''Requests all the weather stations in New England, dates of operation, and 
+  much more meta data. Converts these dates to Julian dates '''
   # Creates a dictionary of all the New England and adjacement states and the metadata assoiated with station 
   input_dict = {"state":["CT","RI", "MA", "RI", "ME", "NY", "VT", "NH"],"elems":["maxt"],"meta":["name","state", "LL", "valid_daterange", "county", "uid", "climdiv", "elev", "sids"]}
 
@@ -43,12 +45,11 @@ def weatherStations():
   #return the df with all the station info
   return df
 
-def pointtotempdata():
-  #This is the call we need after we get the indexing in the nearest_neighbors_results(). It's re-indexing from 0-N and need to use the field  'uid' from the function  weatherstation()
-  #http://data.rcc-acis.org/StnData?sid=068138&sdate=1917-06-01&edate=1917-07-01&elems=1,2,43
-  return False
-
 def retrieveMlyClimateData(df_dates, start, end):
+  '''Within each specimen, it iterates though each of the nearest neighbor weather stations in chronological 
+  order until it finds a specimen's collection date within the dates of operation of its nearest neighbor. 
+  If "IC" is returned, the date on the record was incomplete. If "NFS" is returned, there were no nearest 
+  neighbors found for that record. If "M" is returned, it means there is missing data from ASIC.'''
   date_collected, maxt, maxt_miss, mint, mint_miss, avgT, avgT_miss, pcpn, pcpn_miss, mly_id = [],[],[],[],[],[],[],[],[],[]
   #Loop though the closest weather stations and the date the specimen got collected
   cws_list = cwsList(df_dates)
@@ -121,7 +122,11 @@ def retrieveMlyClimateData(df_dates, start, end):
 
 
 def retrieveDlyClimateData(df_dates, start, end):
-  date_collected,maxt,mint, avgT, pcpn, dly_id = [],[],[],[],[],[]
+  '''Within each specimen, it iterates though each of the nearest neighbor weather stations in chronological
+  order until it finds a specimen's collection date within the dates of operation of its nearest neighbor.
+  If "IC" is returned, the date on the record was incomplete. If "NFS" is returned, there were no nearest 
+  neighbors found for that record. If "M" is returned, it means there is missing data from ASIC.'''
+  date_collected, maxt, mint, avgT, pcpn, dly_id = [], [], [], [], [], []
   #Loop though the closest weather stations and the date the specimen got collected
   cws_list = cwsList(df_dates)
   count = 0
@@ -169,6 +174,7 @@ def retrieveDlyClimateData(df_dates, start, end):
 
 #Transfer json file into flat dataframe
 def callASIC(input_dict):
+  '''Makes the request to ACIS data services requesting all the metadata of the nearest neighbors weather station.'''
   params = urllib.urlencode({'params':json.dumps(input_dict)})
   req = urllib2.Request('http://data.rcc-acis.org/StnData', params, {'Accept':'application/json'})
   response = urllib2.urlopen(req)
@@ -180,6 +186,7 @@ def callASIC(input_dict):
 #concatenate the daily and monthly climate data with the specimen record 
 #NEED TO ADD a RETURN
 def concatenateDlyAndMly(dly, mly, df_dates):
+  '''Concatenate the daily and monthly results to the original dataset.'''
   dly_mly_specimen_df = concat([df_dates, dly, mly], axis=1)
   #print dly_mly_specimen_df.info()
   #dly_mly_specimen_df.to_csv('output/see.csv', index = False)
@@ -187,6 +194,7 @@ def concatenateDlyAndMly(dly, mly, df_dates):
 
 
 def cwsList(df):
+  '''create a list of nearest neighbors weather stations to make it easier to iterate through the list.'''
   df = df[['1_CWSs', '2_CWSs', '3_CWSs', '4_CWSs', '5_CWSs', '6_CWSs', '7_CWSs', '8_CWSs', '9_CWSs', '10_CWSs']]
   df = map(list, df.values)
   return df

@@ -3,6 +3,8 @@ from pandas import merge, DataFrame
 import time
 
 def geocoder (df):
+  '''Takes a string of location information and geocodes the info into lat/long 
+  coordinates and creates a string of locations of each specimen.'''
   #Library for geocoding
   #Change to match the geocoding column
   location_col_name = 'location'

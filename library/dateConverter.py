@@ -2,6 +2,11 @@ from datetime import datetime
 from errorCheck import acisDateChecker
 
 def joinDate(df):
+  '''If acisDateChecker() is true, this will change the column header of 'date' to 'original date'.
+  The data from 'date' does not change, just the header name. The data is then converted to Julian Date.
+  If any individuals units of year, month, or day do not exist, it will break the full date column into
+  separate columns of year, month, and day. Checks again that all the values 0-9 and '-' and then labels 
+  that 'date'. '''
 
   if acisDateChecker(df) == True:
     df = tempColumnRename(df)
@@ -15,6 +20,7 @@ def joinDate(df):
 
 
 def yearMonthDay(string_dates):
+  '''Takes a string of dates and breaks the data into individual units: year, month, and day.'''
   date_fmt = '%Y-%m-%d'
   year, month, day = [], [], []
   for index, string_date in enumerate(string_dates):
@@ -38,7 +44,8 @@ def yearMonthDay(string_dates):
   return year, month, day
 
 
-def stringDateToJulianDate(string_dates): 
+def stringDateToJulianDate(string_dates):
+  '''Takes a string of dates and converts to Julian date.'''
   julianDates = []
   for index, string_date in enumerate(string_dates):
     if string_date[len(string_date) - 2 :] == '-0':
@@ -56,6 +63,7 @@ def stringDateToJulianDate(string_dates):
   return julianDates
 
 def changeDateformat(df):
+  '''Takes individual units year, month, and day and concatenates into the format of YYYY-MM-DD'''
   newDateFormat = []
   for year, month, day, in zip(df['year'], df['month'], df['day']):
     newfmt = '-'.join([str(year), str(month), str(day)])
@@ -63,6 +71,8 @@ def changeDateformat(df):
   return newDateFormat
 
 def tempColumnRename(df):
+  '''Changes the "date" column header to "original date,"" with the original data (and its incorrect formatting) unchanged.
+  The new date, generated from changeDateformat() and in the correct format of YYYY-MM-DD, will be named 'date'.'''
   df = df.rename(columns={'date': 'orginal_date'})
   return df
 

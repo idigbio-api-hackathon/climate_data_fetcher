@@ -4,6 +4,9 @@ import numpy as np
 from pandas import DataFrame, concat, merge
 
 def nearestNeighborsSetup(df_specimens, df_stations):
+  '''Loads the lat/long coordinates of the specimens and weather stations into numpy arrays.
+  NearestNeighborsResults() will return he number of K (nearest stations) with the index value.
+  Then index will be replaced by the UID to match the ASIC data serve.'''
 
 	#Number of points
   np1 = np.array(df_specimens['longitude']).size
@@ -56,6 +59,7 @@ def nearestNeighborsSetup(df_specimens, df_stations):
 
 #kd-tree for quick nearest-neighbor lookup    
 def nearestNeighborsResults(d1, d2, r, k):
+  '''runs a cKDTree nearest-neighbor lookup on botanical records against ACIS weather stations '''
   t = cKDTree(d2)
   distance, index = t.query(d1, k=k, eps=0, p=2, distance_upper_bound=r)
   return index
@@ -66,5 +70,6 @@ def dis(d1, d2, r, k):
   return distance
 
 #Print columns name X number of closest_weather_station set by K in the function nearest_neighbors_setup
-def nearestNeighborsColumnString(x): 
+def nearestNeighborsColumnString(x):
+  '''Produces a string of headers of X_CWSs... columns as many as K'''
   return lambda : str(x + 1) + '_CWS'
