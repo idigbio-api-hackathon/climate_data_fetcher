@@ -1,4 +1,9 @@
 #!/usr/bin/env python2.7
+################################################################
+#Run: python geocoding filename.csv
+#By: Brian Franzone
+#E-mail: Franzone89@gmail.com
+################################################################
 #Summary : Takes a string of specimens' locality information and geocodes the info through Google Maps' API,
 #which returns a string of text and the lat/long coordinates. The next step is fetching all the weather
 #stations and meta data in New England and adjacent states. Following this, all the geocoded
@@ -12,15 +17,11 @@
 #and precipitation (pcpn) variables. If only the month of collection is known, it will return the monthly
 #max, min, avg, pncp variables as well as the number of days of missing climate observations
 #occurred that month
-
-#Run: python geocoding filename.csv
-#By: Brian Franzone
-#E-mail: Franzone89@gmail.com
 #Notes
 #http://data.rcc-acis.org/StnData?uid=283&sdate=1917-06-01&edate=1917-07-01&elems=1,2,43
 #http://data.rcc-acis.org/StnData?sid=068138&sdate=1917-06-01&edate=1917-07-01&elems=1,2,43
 #day, maxt[1], mint[2], avgt43[43]
-
+################################################################
 from library.googleGeocoder import *
 from library.dateConverter import *
 from library.cKDTree import *
