@@ -50,7 +50,7 @@ occurred that month.
 
 ##How to run:
 * python climateFetcher.py [filename]
-* ex: python climateFetcher.py exsample.csv
+* ex: python climateFetcher.py example.csv
 
 
 ##Detailed description of each script:
