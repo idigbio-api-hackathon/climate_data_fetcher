@@ -6,7 +6,7 @@ specimen lat/longs are placed into a numpy array, and matched with a separate nu
 comprised of the lat/longs of the weather stations. Using a cKDTree algorithm (quick nearest-
 neighbor lookup), each specimen is matched with its closest weather station using euclidean
 distance. The returns include up to 10 of the closest weather stations, up to a 50 km radius. Iterating
-through each specimen, doing a dictionary lookup of whether the specimen was collected with the
+through each specimen, doing a dictionary lookup of whether the specimen was collected within the
 operation dates of the station. If true, it will make a request to ACIS data services for the climate
 variables. If the day of collection is known, ACIS will return that day's maximum, minimum, average,
 and precipitation (pcpn) variables. If only the month of collection is known, it will return the monthly
