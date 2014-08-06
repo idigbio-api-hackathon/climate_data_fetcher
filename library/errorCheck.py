@@ -25,7 +25,7 @@ def cleanUp(df):
   this error: "Date field contains non-digits. The require format is YYYY-MM-DD and anything outside will 
   produce an error [location: errorcheck.py]"'''
 
-  df = df.dropna()
+  df = df.dropna(how='all')
   year_check = 'year' in df.columns
   month_check = 'month' in df.columns
   day_check = 'day' in df.columns
