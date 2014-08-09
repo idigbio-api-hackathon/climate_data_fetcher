@@ -5,7 +5,7 @@ stations and meta data in New England and adjacent states. Following this, all t
 specimen lat/longs are placed into a numpy array, and matched with a separate numpy array that is
 comprised of the lat/longs of the weather stations. Using a cKDTree algorithm (quick nearest-
 neighbor lookup), each specimen is matched with its closest weather station using euclidean
-distance. The returns include up to 10 of the closest weather stations, up to a 50 km radius. Iterating
+distance. The returns include up to 10 of the closest weather stations, up to a 25 km radius. Iterating
 through each specimen, doing a dictionary lookup of whether the specimen was collected within the
 operation dates of the station. If true, it will make a request to ACIS data services for the climate
 variables. If the day of collection is known, ACIS will return that day's maximum, minimum, average,
