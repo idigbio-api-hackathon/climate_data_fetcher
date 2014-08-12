@@ -22,6 +22,7 @@ def nearestNeighborsSetup(df_specimens, df_stations):
   d2 = np.empty((np2, 2))
   d1[:, 0] = np.array(df_specimens['latitude'])
   d1[:, 1] = np.array(df_specimens['longitude'])
+
   d2[:, 0] = np.array(df_stations['latitude'])
   d2[:, 1] = np.array(df_stations['longitude'])
  
@@ -40,18 +41,14 @@ def nearestNeighborsSetup(df_specimens, df_stations):
     'uid': t2})
 
   for index, column_name in enumerate(columnindex):
-
-    if index == 0:
-      temp = uid_index.rename(columns={'0_closest_weather_station': column_name, 'uid': column_name + "s"})
-      df_results = df_results.reset_index().merge(temp, how='left', on= column_name, sort=False).sort('index')
-
-    else:
-      temp = uid_index.rename(columns={'0_closest_weather_station': column_name, 'uid': column_name + "s"})
-      df_results = df_results.reset_index().merge(temp, how='left', on= column_name, sort=False).sort('index')
+    temp = uid_index.rename(columns={'0_closest_weather_station': column_name, 'uid': column_name + "s"})
+    df_results = df_results.reset_index().merge(temp, how='left', on= column_name, sort=False).sort('index')
+    
+    if index != 0:
       del df_results['level_0']
 
     del df_results[column_name]
-  #del df1['level_0']
+
   del df_results['index']
   df_results = df_results.reset_index()
   return concat([df_specimens, df_results], axis=1)
