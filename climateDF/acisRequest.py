@@ -71,15 +71,18 @@ def weatherStations(stateList):
   # return df
 
 
-def retMonthlyData(nearestStations, stationDates):
+def retMonthlyData(nearestStations, stationDates, distance):
   '''Within each specimen, it iterates though each of the nearest neighbor weather stations in chronological 
   order until it finds a specimen's collection date within the dates of operation of its nearest neighbor. 
   If "IC" is returned, the date on the record was incomplete. If "NFS" is returned, there were no nearest 
   neighbors found for that record. If "M" is returned, it means there is missing data from ASIC.'''
-  date_collected, maxt, maxt_miss, mint, mint_miss, avgT, avgT_miss, pcpn, pcpn_miss, mly_id = [],[],[],[],[],[],[],[],[],[]
+  date_collected, maxt, maxt_miss, mint, mint_miss, avgT, avgT_miss, pcpn, pcpn_miss, mly_id, dis = [],[],[],[],[],[],[],[],[],[],[]
   #Loop though the closest weather stations and the date the specimen got collected
   cws_list = cwsList(nearestStations)
+  countArray = -1
   for uid, date, jdate, month, closest in zip(nearestStations['1_CWSs'], nearestStations['concatDate'], nearestStations['julianDate'], nearestStations['month'], cws_list):
+    countArray += 1
+    countIndex = 0
     for index, z in enumerate(closest):
       if math.isnan(z):
         continue
@@ -95,6 +98,8 @@ def retMonthlyData(nearestStations, stationDates):
         pcpn.append('IC')
         pcpn_miss.append('IC')
         mly_id.append('IC')
+        dis.append('IC')
+        countIndex +=1
         break
       #print index,  "\t", start.get(z), "\t", jdate, "\t", end.get(z), "\t", close, "\t", z
       elif stationDates[z]['Julianstartofoperation'] < jdate and jdate < stationDates[z]['Julianendofoperation']:
@@ -115,6 +120,8 @@ def retMonthlyData(nearestStations, stationDates):
           avgT.append('NSF')
           pcpn.append('NSF')
           mly_id.append('NSF')
+          dis.append('NSF')
+          countIndex +=1
           break
         #Loop over the data field and append maxt, mint, avgt, pcpn to an array
         for result in data['data']:
@@ -126,11 +133,14 @@ def retMonthlyData(nearestStations, stationDates):
               mint.append(mintemp)
               avgT.append(avgtemp)
               pcpn.append(pcpnfall)
+              distanceKM = '%.3f' % (distance[countArray][countIndex] * 100)
+              dis.append(distanceKM)
             else:
               maxt_miss.append(maxtemp)
               mint_miss.append(mintemp)
               avgT_miss.append(avgtemp)
               pcpn_miss.append(pcpnfall)
+        countIndex +=1
         break
       elif index == 9:
         print 'Mly NFS', uid, date
@@ -144,13 +154,15 @@ def retMonthlyData(nearestStations, stationDates):
         pcpn.append('NSF')
         pcpn_miss.append('NSF')
         mly_id.append('NSF')
+        dis.append('NSF')
+        countIndex +=1
         break
       else:
         continue
   #Transfer json file into flat dataframe
-  df = DataFrame([date_collected,maxt, maxt_miss, mint, mint_miss, avgT, avgT_miss, pcpn, pcpn_miss, mly_id]).T
+  df = DataFrame([date_collected,maxt, maxt_miss, mint, mint_miss, avgT, avgT_miss, pcpn, pcpn_miss, mly_id, dis]).T
   #Rename number columns to name fields
-  df = df.rename(columns={0:'mly_date', 1: 'mly_maxt', 2: 'mly_maxt_nmppm', 3: 'mly_mint', 4: 'mly_mint_nmppm', 5:'mly_avgt', 6:'mly_avgt_nmppm', 7:'mly_pcpn', 8: 'mly_pcpn_nmppm', 9:'mly_id_use'})
+  df = df.rename(columns={0:'mly_date', 1: 'mly_maxt', 2: 'mly_maxt_nmppm', 3: 'mly_mint', 4: 'mly_mint_nmppm', 5:'mly_avgt', 6:'mly_avgt_nmppm', 7:'mly_pcpn', 8: 'mly_pcpn_nmppm', 9:'mly_id_use', 10:'monthlyDistance_KM'})
   return df
 
 #Web services calls to ACIS for daily:
@@ -292,19 +304,22 @@ def retYearlyData(nearestStations, stationDates, distance):
   #Transfer json file into flat dataframe
   df = DataFrame([date_collected,maxt, maxt_miss, mint, mint_miss, avgT, avgT_miss, pcpn, pcpn_miss, mly_id, iDigBio, yearCol, monthCol, dis]).T
   #Rename number columns to name fields
-  df = df.rename(columns={0:'mly_date', 1: 'mly_maxt', 2: 'mly_maxt_nmppm', 3: 'mly_mint', 4: 'mly_mint_nmppm', 5:'mly_avgt', 6:'mly_avgt_nmppm', 7:'mly_pcpn', 8: 'mly_pcpn_nmppm', 9:'uid_mly_used', 10:'iDigBioUUID', 11:'yearM', 12:'monthM', 13:'distance'})
+  df = df.rename(columns={0:'mly_date', 1: 'mly_maxt', 2: 'mly_maxt_nmppm', 3: 'mly_mint', 4: 'mly_mint_nmppm', 5:'mly_avgt', 6:'mly_avgt_nmppm', 7:'mly_pcpn', 8: 'mly_pcpn_nmppm', 9:'uid_mly_used', 10:'iDigBioUUID', 11:'yearM', 12:'monthM', 13:'yearlyDistance_KM'})
   return df
 
-def retDailyData(nearestStations, stationDates):
+def retDailyData(nearestStations, stationDates, distance):
   '''Within each specimen, it iterates though each of the nearest neighbor weather stations in chronological
   order until it finds a specimen's collection date within the dates of operation of its nearest neighbor.
   If "IC" is returned, the date on the record was incomplete. If "NFS" is returned, there were no nearest 
   neighbors found for that record. If "M" is returned, it means there is missing data from ASIC.'''
-  date_collected, maxt, mint, avgT, pcpn, dly_id = [], [], [], [], [], []
+  date_collected, maxt, mint, avgT, pcpn, dly_id, dis = [], [], [], [], [], [], []
   #Loop though the closest weather stations and the date the specimen got collected
   cws_list = cwsList(nearestStations)
   count = 0
+  countArray = -1
   for uid, date, jdate, day, closest in zip(nearestStations['1_CWSs'], nearestStations['concatDate'], nearestStations['julianDate'], nearestStations['day'], cws_list):
+    countArray += 1
+    countIndex = 0
     for index, z in enumerate(closest):
       if math.isnan(z):
         continue
@@ -316,7 +331,9 @@ def retDailyData(nearestStations, stationDates):
         mint.append('IC')
         avgT.append('IC')
         pcpn.append('IC')
+        dis.append('IC')
         dly_id.append(z)
+        countIndex +=1
         break
       elif stationDates[z]['Julianstartofoperation'] < jdate and jdate < stationDates[z]['Julianendofoperation']:
         print 'Dly request', uid, date
@@ -332,6 +349,8 @@ def retDailyData(nearestStations, stationDates):
           avgT.append('NSF')
           pcpn.append('NSF')
           dly_id.append('NSF')
+          dis.append('NSF')
+          countIndex +=1
           break
 
         #Loop over the data field and append maxt, mint, avgt, pcpn to an array
@@ -342,6 +361,9 @@ def retDailyData(nearestStations, stationDates):
           avgT.append(result[3])
           pcpn.append(result[4])
           dly_id.append(z)
+          distanceKM = '%.3f' % (distance[countArray][countIndex] * 100)
+          dis.append(distanceKM)
+        countIndex +=1
         break
       elif index == 9:
         date_collected.append('NSF')
@@ -350,11 +372,13 @@ def retDailyData(nearestStations, stationDates):
         avgT.append('NSF')
         pcpn.append('NSF')
         dly_id.append('NSF')
+        dis.append('NSF')
+        countIndex +=1
         break
       else:
         continue
-  df = DataFrame([date_collected,maxt,mint, avgT, pcpn, dly_id]).T
-  df = df.rename(columns={0:'dly_date', 1: 'dly_maxt', 2: 'dly_mint', 3:'dly_avgt', 4:'dly_pcpn', 5:'dly_id_use'})
+  df = DataFrame([date_collected,maxt,mint, avgT, pcpn, dly_id, dis]).T
+  df = df.rename(columns={0:'dly_date', 1: 'dly_maxt', 2: 'dly_mint', 3:'dly_avgt', 4:'dly_pcpn', 5:'dly_id_use', 6:'dailyDistance_KM'})
   #df['dlyJulianDate'] = stringDateToJulianDate(df["dly_Date"])
   return df
 

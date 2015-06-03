@@ -42,8 +42,8 @@ def main ():
         stateList = ["CT","RI", "MA", "ME", "NY", "VT", "NH"]
         nearestN, distance, weatherStationsMetaData = nearestNeighborsSetup(filename=filename, stateList = stateList)
 
-        daily = retDailyData(nearestStations = nearestN, stationDates = weatherStationsMetaData)
-        monthly = retMonthlyData(nearestStations = nearestN, stationDates = weatherStationsMetaData)
+        daily = retDailyData(nearestStations = nearestN, stationDates = weatherStationsMetaData, distance = distance)
+        monthly = retMonthlyData(nearestStations = nearestN, stationDates = weatherStationsMetaData, distance = distance)
 
         dailyMonthlyResult = concatenateDlyAndMly(daily = daily, monthly = monthly, nearestStations = nearestN)
         print dailyMonthlyResult.to_json(orient='index')
@@ -51,9 +51,9 @@ def main ():
         pathName = 'output/' + checkInputFiletoOutfile[:-4] + '_Daily_Monthly.csv'
         dailyMonthlyResult.to_csv(pathName, index = False)
 
-        # yearlyResult = retYearlyData(nearestStations = nearestN, stationDates = weatherStationsMetaData, distance = distance)
-        # pathName = 'output/' + checkInputFiletoOutfile[:-4] + '_Yearly.csv'
-        # yearlyResult.to_csv(pathName, index = False)
+        yearlyResult = retYearlyData(nearestStations = nearestN, stationDates = weatherStationsMetaData, distance = distance)
+        pathName = 'output/' + checkInputFiletoOutfile[:-4] + '_Yearly.csv'
+        yearlyResult.to_csv(pathName, index = False)
 
 if __name__ == '__main__':
   main()
