@@ -23,7 +23,7 @@
 #day, maxt[1], mint[2], avgt43[43]
 ################################################################
 #from climateDF.googleGeocoder import *
-from climateDF.cKDTree import *
+from climateDF.tree import *
 import glob
 
 
