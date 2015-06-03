@@ -22,8 +22,6 @@
 from climateDF.tree import *
 import glob
 
-
-
 def main ():
     inputFiles = glob.glob('input/*.csv')
     for filename in inputFiles:
@@ -36,20 +34,32 @@ def main ():
             continue
 
         stateList = ["CT","RI", "MA", "ME", "NY", "VT", "NH"]
-        nearestN, distance, weatherStationsMetaData = nearestNeighborsSetup(filename=filename, stateList = stateList)
+        # stateList = ["RI"]
+        nearestN, distance, weatherStationsMetaData = nearestNeighborsSetup(filename=filename, stateList=stateList)
 
-        daily = retDailyData(nearestStations = nearestN, stationDates = weatherStationsMetaData, distance = distance)
-        monthly = retMonthlyData(nearestStations = nearestN, stationDates = weatherStationsMetaData, distance = distance)
+        daily = retDailyData(nearestStations=nearestN, 
+            stationDates=weatherStationsMetaData, 
+            distance=distance)
 
-        dailyMonthlyResult = concatenateDlyAndMly(daily = daily, monthly = monthly, nearestStations = nearestN)
+        monthly = retMonthlyData(nearestStations=nearestN, 
+            stationDates=weatherStationsMetaData, 
+            distance=distance)
+
+        dailyMonthlyResult = concatenateDlyAndMly(daily=daily, 
+            monthly=monthly, 
+            nearestStations=nearestN)
+
         print dailyMonthlyResult.to_json(orient='index')
 
         pathName = 'output/' + checkInputFiletoOutfile[:-4] + '_Daily_Monthly.csv'
-        dailyMonthlyResult.to_csv(pathName, index = False)
+        dailyMonthlyResult.to_csv(pathName, index=False)
 
-        yearlyResult = retYearlyData(nearestStations = nearestN, stationDates = weatherStationsMetaData, distance = distance)
+        yearlyResult = retYearlyData(nearestStations=nearestN, 
+            stationDates=weatherStationsMetaData, 
+            distance=distance)
+        
         pathName = 'output/' + checkInputFiletoOutfile[:-4] + '_Yearly.csv'
-        yearlyResult.to_csv(pathName, index = False)
+        yearlyResult.to_csv(pathName, index=False)
 
 if __name__ == '__main__':
   main()

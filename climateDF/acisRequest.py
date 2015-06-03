@@ -15,9 +15,7 @@ import math
 def weatherStations(stateList):
   '''Requests all the weather stations in New England, dates of operation, and 
   much more meta data. Converts these dates to Julian dates '''
-  # Creates a dictionary of all the New England and adjacement states and the metadata assoiated with station 
-  # input_dict = {"state":["CT","RI", "MA", "ME", "NY", "VT", "NH"],"elems":["maxt"],"meta":["name","state", "LL", "valid_daterange", "county", "uid", "climdiv", "elev", "sids"]}
-  # input_dict = {"state":["FL", "AL", "GA"],"elems":["maxt"],"meta":["name","state", "LL", "valid_daterange", "county", "uid", "climdiv", "elev", "sids"]}
+  # Creates a dictionary of all the states in the list and get the metadata assoiated with station 
   input_dict = {"state":stateList,"elems":["maxt"],"meta":["name","state", "LL", "valid_daterange", "county", "uid", "climdiv", "elev", "sids"]}
 
   params = urllib.urlencode({'params':json.dumps(input_dict)})
@@ -80,7 +78,8 @@ def retMonthlyData(nearestStations, stationDates, distance):
   #Loop though the closest weather stations and the date the specimen got collected
   cws_list = cwsList(nearestStations)
   countArray = -1
-  for uid, date, jdate, month, closest in zip(nearestStations['1_CWSs'], nearestStations['concatDate'], nearestStations['julianDate'], nearestStations['month'], cws_list):
+  for uid, date, jdate, month, closest in zip(nearestStations['1_CWSs'], nearestStations['concatDate'], 
+    nearestStations['julianDate'], nearestStations['month'], cws_list):
     countArray += 1
     countIndex = 0
     for index, z in enumerate(closest):
@@ -162,7 +161,13 @@ def retMonthlyData(nearestStations, stationDates, distance):
   #Transfer json file into flat dataframe
   df = DataFrame([date_collected,maxt, maxt_miss, mint, mint_miss, avgT, avgT_miss, pcpn, pcpn_miss, mly_id, dis]).T
   #Rename number columns to name fields
-  df = df.rename(columns={0:'mly_date', 1: 'mly_maxt', 2: 'mly_maxt_nmppm', 3: 'mly_mint', 4: 'mly_mint_nmppm', 5:'mly_avgt', 6:'mly_avgt_nmppm', 7:'mly_pcpn', 8: 'mly_pcpn_nmppm', 9:'mly_id_use', 10:'monthlyDistance_KM'})
+  df = df.rename(columns={0:'mly_date', 1: 'mly_maxt',
+    2: 'mly_maxt_nmppm', 3: 'mly_mint',
+    4: 'mly_mint_nmppm', 5:'mly_avgt',
+    6:'mly_avgt_nmppm', 7:'mly_pcpn',
+    8: 'mly_pcpn_nmppm', 9:'mly_id_use',
+    10:'monthlyDistance_KM'})
+
   return df
 
 #Web services calls to ACIS for daily:
@@ -184,7 +189,10 @@ def retYearlyData(nearestStations, stationDates, distance):
   #Loop though the closest weather stations and the date the specimen got collected
   cws_list = cwsList(nearestStations)
   countArray = -1
-  for uid, date, jdate, month, closest, iDigBioUUID in zip(nearestStations['1_CWSs'], nearestStations['concatDate'], nearestStations['julianDate'], nearestStations['month'], cws_list, nearestStations['url']):
+  for uid, date, jdate, month, closest, iDigBioUUID in zip(nearestStations['1_CWSs'], 
+    nearestStations['concatDate'], nearestStations['julianDate'], nearestStations['month'],
+    cws_list, nearestStations['iDigBioUUID']):
+
     countArray += 1
     countIndex = 0
     for index, z in enumerate(closest):
@@ -302,9 +310,18 @@ def retYearlyData(nearestStations, stationDates, distance):
         countIndex +=1
         continue
   #Transfer json file into flat dataframe
-  df = DataFrame([date_collected,maxt, maxt_miss, mint, mint_miss, avgT, avgT_miss, pcpn, pcpn_miss, mly_id, iDigBio, yearCol, monthCol, dis]).T
+  df = DataFrame([date_collected,maxt, maxt_miss, mint, mint_miss, avgT,
+   avgT_miss, pcpn, pcpn_miss, mly_id, iDigBio, yearCol, monthCol, dis]).T
+
   #Rename number columns to name fields
-  df = df.rename(columns={0:'mly_date', 1: 'mly_maxt', 2: 'mly_maxt_nmppm', 3: 'mly_mint', 4: 'mly_mint_nmppm', 5:'mly_avgt', 6:'mly_avgt_nmppm', 7:'mly_pcpn', 8: 'mly_pcpn_nmppm', 9:'uid_mly_used', 10:'iDigBioUUID', 11:'yearM', 12:'monthM', 13:'yearlyDistance_KM'})
+  df = df.rename(columns={0:'mly_date', 1: 'mly_maxt', 
+    2: 'mly_maxt_nmppm', 3: 'mly_mint', 
+    4: 'mly_mint_nmppm', 5:'mly_avgt',
+    6:'mly_avgt_nmppm', 7:'mly_pcpn', 
+    8: 'mly_pcpn_nmppm', 9:'uid_mly_used',
+    10:'iDigBioUUID',  11:'yearM', 
+    12:'monthM', 13:'yearlyDistance_KM'})
+
   return df
 
 def retDailyData(nearestStations, stationDates, distance):
@@ -317,7 +334,9 @@ def retDailyData(nearestStations, stationDates, distance):
   cws_list = cwsList(nearestStations)
   count = 0
   countArray = -1
-  for uid, date, jdate, day, closest in zip(nearestStations['1_CWSs'], nearestStations['concatDate'], nearestStations['julianDate'], nearestStations['day'], cws_list):
+  for uid, date, jdate, day, closest in zip(nearestStations['1_CWSs'], nearestStations['concatDate'], 
+    nearestStations['julianDate'], nearestStations['day'], cws_list):
+
     countArray += 1
     countIndex = 0
     for index, z in enumerate(closest):
@@ -378,8 +397,8 @@ def retDailyData(nearestStations, stationDates, distance):
       else:
         continue
   df = DataFrame([date_collected,maxt,mint, avgT, pcpn, dly_id, dis]).T
-  df = df.rename(columns={0:'dly_date', 1: 'dly_maxt', 2: 'dly_mint', 3:'dly_avgt', 4:'dly_pcpn', 5:'dly_id_use', 6:'dailyDistance_KM'})
-  #df['dlyJulianDate'] = stringDateToJulianDate(df["dly_Date"])
+  df = df.rename(columns={0:'dly_date', 1: 'dly_maxt', 2: 'dly_mint', 3:'dly_avgt', 
+    4:'dly_pcpn', 5:'dly_id_use', 6:'dailyDistance_KM'})
   return df
 
 #Transfer json file into flat dataframe
@@ -401,8 +420,6 @@ def callASIC(input_dict):
 def concatenateDlyAndMly(daily, monthly, nearestStations):
   '''Concatenate the daily and monthly results to the original dataset.'''
   dly_mly_specimen_df = concat([nearestStations, daily, monthly], axis=1)
-  #print dly_mly_specimen_df.info()
-  #dly_mly_specimen_df.to_csv('output/see.csv', index = False)
   return dly_mly_specimen_df
 
 
