@@ -17,10 +17,6 @@
 #and precipitation (pcpn) variables. If only the month of collection is known, it will return the monthly
 #max, min, avg, pncp variables as well as the number of days of missing climate observations
 #occurred that month
-#Notes
-#http://data.rcc-acis.org/StnData?uid=283&sdate=1917-06-01&edate=1917-07-01&elems=1,2,43
-#http://data.rcc-acis.org/StnData?sid=068138&sdate=1917-06-01&edate=1917-07-01&elems=1,2,43
-#day, maxt[1], mint[2], avgt43[43]
 ################################################################
 #from climateDF.googleGeocoder import *
 from climateDF.tree import *
