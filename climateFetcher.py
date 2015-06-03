@@ -29,18 +29,18 @@ import glob
 
 
 def main ():
-    familyNotDone = glob.glob('input/*.csv')
-    for family in familyNotDone:
-        familyDone = glob.glob('output/*.csv')
-        familyCome = [x.split('/')[1].split('_')[0] + '.csv' for x in familyDone]
+    inputFiles = glob.glob('input/*.csv')
+    for filename in inputFiles:
+        filesCompleted = glob.glob('output/*.csv')
+        completedNameWithoutEndings = [x.split('/')[1].split('_')[0] + '.csv' for x in filesCompleted]
 
-        familyName = family.split('/')[1].split('_')[0] + family[-4:]
-        if familyName in familyCome:
-            print 'Completed climate fetchering for file', familyName
+        checkInputFiletoOutfile = filename.split('/')[1].split('_')[0] + filename[-4:]
+        if checkInputFiletoOutfile in completedNameWithoutEndings:
+            print 'Completed climate fetchering for file', checkInputFiletoOutfile
             continue
-        # stateList = ["CT","RI", "MA", "ME", "NY", "VT", "NH"]
+
         stateList = ["CT","RI", "MA", "ME", "NY", "VT", "NH"]
-        nearestN, distance, weatherStationsMetaData = nearestNeighborsSetup(filename=family, stateList = stateList)
+        nearestN, distance, weatherStationsMetaData = nearestNeighborsSetup(filename=filename, stateList = stateList)
 
         daily = retDailyData(nearestStations = nearestN, stationDates = weatherStationsMetaData)
         monthly = retMonthlyData(nearestStations = nearestN, stationDates = weatherStationsMetaData)
@@ -48,11 +48,11 @@ def main ():
         dailyMonthlyResult = concatenateDlyAndMly(daily = daily, monthly = monthly, nearestStations = nearestN)
         print dailyMonthlyResult.to_json(orient='index')
 
-        pathName = 'output/' + familyName[:-4] + '_Daily_Monthly.csv'
+        pathName = 'output/' + checkInputFiletoOutfile[:-4] + '_Daily_Monthly.csv'
         dailyMonthlyResult.to_csv(pathName, index = False)
 
         # yearlyResult = retYearlyData(nearestStations = nearestN, stationDates = weatherStationsMetaData, distance = distance)
-        # pathName = 'output/' + familyName[:-4] + '_Yearly.csv'
+        # pathName = 'output/' + checkInputFiletoOutfile[:-4] + '_Yearly.csv'
         # yearlyResult.to_csv(pathName, index = False)
 
 if __name__ == '__main__':
