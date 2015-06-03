@@ -22,37 +22,35 @@
 #http://data.rcc-acis.org/StnData?sid=068138&sdate=1917-06-01&edate=1917-07-01&elems=1,2,43
 #day, maxt[1], mint[2], avgt43[43]
 ################################################################
-from library.googleGeocoder import *
-from library.dateConverter import *
-from library.cKDTree import *
-from library.acisRequest import *
-from library.errorCheck import *
+#from climateDF.googleGeocoder import *
+from climateDF.cKDTree import *
+import glob
+
 
 
 def main ():
-    df = errorchecking()
-    print 'Gathering all climate stations for New England and adjacement states from ACIS Data Services\n'
-    #weather_stations_call = weatherStations()
-    weather_stations_call = read_csv('output/acis_station_ID.csv')
+    familyNotDone = glob.glob('input/*.csv')
+    for family in familyNotDone:
+        familyDone = glob.glob('output/*.csv')
+        familyCome = [x.split('/')[1].split('_')[0] + '.csv' for x in familyDone]
 
-    start_date = weather_stations_call.set_index('uid')['Julianstartofoperation'].to_dict()
-    end_date = weather_stations_call.set_index('uid')['Julianendofoperation'].to_dict()
+        familyName = family.split('/')[1].split('_')[0] + family[-4:]
+        if familyName in familyCome:
+            print 'Completed climate fetchering for file', familyName
+            continue
+        stateList = ["CT","RI", "MA", "ME", "NY", "VT", "NH"]
+        nearestN, distance, weatherStationsMetaData = nearestNeighborsSetup(filename=family, stateList = stateList)
 
-    print 'Starting geocoding:\n'
-    geocodedata = joinDate(geocoder(df))
+        daily = retDailyData(nearestStations = nearestN, stationDates = weatherStationsMetaData)
+        monthly = retMonthlyData(nearestStations = nearestN, stationDates = weatherStationsMetaData)
 
-    print 'Starting the cKDTree for the nearest-neighbor lookup\n'
-    #Exports the orginal data into the output folder with concatenation of georeferened data with the top N nearest weather unique ID number 
-    nearestN = nearestNeighborsSetup(geocodedata, weather_stations_call)
+        dailyMonthlyResult = concatenateDlyAndMly(daily = daily, monthly = monthly, nearestStations = nearestN)
+        pathName = 'output/' + familyName[:-4] + '_Daily_Monthly.csv'
+        dailyMonthlyResult.to_csv(pathName, index = False)
 
-    print 'Starting to gather abotic variable for each specimen:\n'
-    result = concatenateDlyAndMly(retrieveDlyClimateData(nearestN, start_date, end_date), retrieveMlyClimateData(nearestN, start_date, end_date), nearestN)
-
-    print "\nAll files exported to the output folder"
-
-    print result.info()
-    result.to_csv('output/specimen_results.csv', index = False)
-
+        yearlyResult = retYearlyData(nearestStations = nearestN, stationDates = weatherStationsMetaData, distance = distance)
+        pathName = 'output/' + familyName[:-4] + '_Yearly.csv'
+        yearlyResult.to_csv(pathName, index = False)
 
 if __name__ == '__main__':
   main()

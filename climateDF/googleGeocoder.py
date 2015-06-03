@@ -23,14 +23,18 @@ def geocoder (df):
       print 'Maximum requests reached. Rerun again in 24 hours or change ip address\n'
       break
     else:
-      time.sleep(.50)
-      g = geocoders.GoogleV3()
-      place, (lat, lng) = g.geocode(location)
-      geoCodeAddress.append(place)
-      geoLat.append(lat)
-      geoLng.append(lng)
-      rawLocation.append(location)
-      print place #remove then not testing
+      try:
+        time.sleep(.50)
+        g = geocoders.GoogleV3()
+        place, (lat, lng) = g.geocode(location)
+        geoCodeAddress.append(place)
+        geoLat.append(lat)
+        geoLng.append(lng)
+        rawLocation.append(location)
+        print place #remove then not testing
+      except:
+        print 'passing on', location
+        pass
 
   #del df['latitude'], df['longitude']
 

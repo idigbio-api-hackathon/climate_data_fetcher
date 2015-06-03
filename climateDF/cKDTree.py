@@ -1,13 +1,19 @@
 #kd-tree for quick nearest-neighbor lookup
 from scipy.spatial import cKDTree
 import numpy as np
+from climateDF.acisRequest import *
+from climateDF.dateConverter import *
 from pandas import DataFrame, concat, merge
 
-def nearestNeighborsSetup(df_specimens, df_stations):
+def nearestNeighborsSetup(filename, stateList):
+  df_specimens = formatChecker(filename)
+  print 'Getting the weather stations'
+  weatherStationsMetaData = weatherStations(stateList)
+  # weatherStationsMetaData = read_csv('weatherStation/acis_station_ID.csv')
+  df_stations = DataFrame.from_dict(weatherStationsMetaData, orient='index', dtype=None)
   '''Loads the lat/long coordinates of the specimens and weather stations into numpy arrays.
   NearestNeighborsResults() will return he number of K (nearest stations) with the index value.
   Then index will be replaced by the UID to match the ASIC data serve.'''
-
 	#Number of points
   np1 = np.array(df_specimens['longitude']).size
   np2 = np.array(df_stations['longitude']).size
@@ -26,11 +32,10 @@ def nearestNeighborsSetup(df_specimens, df_stations):
   d2[:, 0] = np.array(df_stations['latitude'])
   d2[:, 1] = np.array(df_stations['longitude'])
  
-  result = nearestNeighborsResults(d1.copy(), d2.copy(), r, k)
-
+  result, distance = nearestNeighborsResults(d1.copy(), d2.copy(), r, k)
   columnindex = []
-  listOfLambdas = [nearestNeighborsColumnString(count) for count in range(k)]
-  for f in listOfLambdas: columnindex.append(f()),
+  closestStationList = [nearestNeighborsColumnString(x) for x in range(k)]
+  for f in closestStationList: columnindex.append(f()),
   #temp variable for 0-N array
   t1 = np.arange(np2)
   #temp variable for 'uid' ID
@@ -51,15 +56,15 @@ def nearestNeighborsSetup(df_specimens, df_stations):
 
   del df_results['index']
   df_results = df_results.reset_index()
-  return concat([df_specimens, df_results], axis=1)
+  return concat([df_specimens, df_results], axis=1), distance, weatherStationsMetaData
 
 
 #kd-tree for quick nearest-neighbor lookup    
 def nearestNeighborsResults(d1, d2, r, k):
   '''runs a cKDTree nearest-neighbor lookup on botanical records against ACIS weather stations '''
   t = cKDTree(d2)
-  distance, index = t.query(d1, k=k, eps=0, p=2, distance_upper_bound=r)
-  return index
+  distance, index = t.query(d1, k=k, eps=1, p=2, distance_upper_bound=r)
+  return index, distance
 
 def dis(d1, d2, r, k):
   t = cKDTree(d2)
