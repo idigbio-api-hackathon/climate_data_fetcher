@@ -38,6 +38,7 @@ def main ():
         if familyName in familyCome:
             print 'Completed climate fetchering for file', familyName
             continue
+        # stateList = ["CT","RI", "MA", "ME", "NY", "VT", "NH"]
         stateList = ["CT","RI", "MA", "ME", "NY", "VT", "NH"]
         nearestN, distance, weatherStationsMetaData = nearestNeighborsSetup(filename=family, stateList = stateList)
 
@@ -45,12 +46,14 @@ def main ():
         monthly = retMonthlyData(nearestStations = nearestN, stationDates = weatherStationsMetaData)
 
         dailyMonthlyResult = concatenateDlyAndMly(daily = daily, monthly = monthly, nearestStations = nearestN)
+        print dailyMonthlyResult.to_json(orient='index')
+
         pathName = 'output/' + familyName[:-4] + '_Daily_Monthly.csv'
         dailyMonthlyResult.to_csv(pathName, index = False)
 
-        yearlyResult = retYearlyData(nearestStations = nearestN, stationDates = weatherStationsMetaData, distance = distance)
-        pathName = 'output/' + familyName[:-4] + '_Yearly.csv'
-        yearlyResult.to_csv(pathName, index = False)
+        # yearlyResult = retYearlyData(nearestStations = nearestN, stationDates = weatherStationsMetaData, distance = distance)
+        # pathName = 'output/' + familyName[:-4] + '_Yearly.csv'
+        # yearlyResult.to_csv(pathName, index = False)
 
 if __name__ == '__main__':
   main()
