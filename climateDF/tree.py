@@ -4,11 +4,15 @@ import numpy as np
 from climateDF.acisRequest import *
 from climateDF.dateConverter import *
 from pandas import DataFrame, concat, merge
+import argparse
 
 def nearestNeighborsSetup(filename, stateList):
   df_specimens = formatChecker(filename)
   print 'Getting the weather stations'
-  weatherStationsMetaData = weatherStations(stateList)
+  with open('input/acis_station_ID.pickle') as f:
+      weatherStationsMetaData = cPickle.load(f)
+
+  # weatherStationsMetaData = weatherStations(stateList)
   # weatherStationsMetaData = read_csv('weatherStation/acis_station_ID.csv')
   df_stations = DataFrame.from_dict(weatherStationsMetaData, orient='index', dtype=None)
   '''Loads the lat/long coordinates of the specimens and weather stations into numpy arrays.

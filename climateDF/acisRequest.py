@@ -10,6 +10,8 @@ try :
 except ImportError :
   import simplejson as json
 import math
+import cPickle
+import numpy as np
 
 #Gathering all climate stations for New England and adjacement states from ACIS Data Services. Transforms the json file into dataframe and then return it
 def weatherStations(stateList):
@@ -64,6 +66,9 @@ def weatherStations(stateList):
   # df = DataFrame.from_dict(weatherDic, orient='index', dtype=None)
   # df = df[['uid', 'state', 'climdiv', 'county', 'name', 'startofoperation', 'endofoperation', 'Julianstartofoperation', 'Julianendofoperation', 'latitude', 'longitude', 'elev', 'sids']]
   # df.to_csv('weatherStation/acis_station_ID.csv', index = False)
+
+  with open('input/acis_station_ID.pickle', 'wb') as f:
+    cPickle.dump(weatherDic, f)
   
   return weatherDic
   # return df
@@ -82,9 +87,27 @@ def retMonthlyData(nearestStations, stationDates, distance):
     nearestStations['julianDate'], nearestStations['month'], cws_list):
     countArray += 1
     countIndex = 0
+    if np.isnan(uid):
+      date_collected.append('NSF')
+      maxt.append('NSF')
+      mint.append('NSF')
+      avgT.append('NSF')
+      pcpn.append('NSF')
+      mly_id.append('NSF')
+      dis.append('NSF')
+      countIndex +=1
+      continue
     for index, z in enumerate(closest):
       if math.isnan(z):
-        continue
+        date_collected.append('NSF')
+        maxt.append('NSF')
+        mint.append('NSF')
+        avgT.append('NSF')
+        pcpn.append('NSF')
+        mly_id.append('NSF')
+        dis.append('NSF')
+        countIndex +=1
+        break
       if month == 0 or month == 00:
         print 'Mly IC', uid, date
         date_collected.append('IC')
@@ -170,16 +193,6 @@ def retMonthlyData(nearestStations, stationDates, distance):
 
   return df
 
-#Web services calls to ACIS for daily:
-# maximum value temp(F), 
-# minimum value temp, 
-# average temperature,
-# precipitation (inches)  
-
-
-        # print weather_stations_call[16383]['Julianstartofoperation']
-        # print weather_stations_call[16383]['Julianendofoperation']
-
 def retYearlyData(nearestStations, stationDates, distance):
   '''Within each specimen, it iterates though each of the nearest neighbor weather stations in chronological 
   order until it finds a specimen's collection date within the dates of operation of its nearest neighbor. 
@@ -195,9 +208,41 @@ def retYearlyData(nearestStations, stationDates, distance):
 
     countArray += 1
     countIndex = 0
+    if np.isnan(uid):
+      date_collected.append('NSF')
+      maxt.append('NSF')
+      maxt_miss.append('NSF')
+      mint.append('NSF')
+      mint_miss.append('NSF')
+      avgT.append('NSF')
+      avgT_miss.append('NSF')
+      pcpn.append('NSF')
+      pcpn_miss.append('NSF')
+      mly_id.append('NSF')
+      iDigBio.append(iDigBioUUID)
+      yearCol.append('NSF')
+      monthCol.append('NSF')
+      dis.append('NSF')
+      countIndex +=1
+      continue
     for index, z in enumerate(closest):
       if math.isnan(z):
-        continue
+        date_collected.append('NSF')
+        maxt.append('NSF')
+        maxt_miss.append('NSF')
+        mint.append('NSF')
+        mint_miss.append('NSF')
+        avgT.append('NSF')
+        avgT_miss.append('NSF')
+        pcpn.append('NSF')
+        pcpn_miss.append('NSF')
+        mly_id.append('NSF')
+        iDigBio.append(iDigBioUUID)
+        yearCol.append('NSF')
+        monthCol.append('NSF')
+        dis.append('NSF')
+        countIndex +=1
+        break
       if month == 0 or month == 00:
         print 'Mly IC', uid, date
         date_collected.append('IC')
@@ -238,26 +283,18 @@ def retYearlyData(nearestStations, stationDates, distance):
         {'name':'avgt','interval':'mly','duration':'mly','reduce':{'reduce':'mean','add':'mcnt'}},
         {'name':'pcpn','interval':'mly','duration':'mly','reduce':{'reduce':'sum','add':'mcnt'}},]}
 
-        # input_dict = {'uid': z, 'sdate': str(int(date.split('-')[0]) - 1) + '-' + date.split('-')[1], 'edate':'-'.join(date.split('-')[0:2], 'elems':
-        # [{'name':'maxt','interval':'mly','duration':'mly','reduce':{'reduce':'max','add':'mcnt'}}, 
-        # {'name':'mint','interval':'mly','duration':'mly','reduce':{'reduce':'min','add':'mcnt'}}, 
-        # {'name':'avgt','interval':'mly','duration':'mly','reduce':{'reduce':'mean','add':'mcnt'}},
-        # {'name':'pcpn','interval':'mly','duration':'mly','reduce':{'reduce':'sum','add':'mcnt'}},]}
-
-        # input_dict = {uid: z, 
-        # sdate: str(int(date.split('-')[0]) - 1) + '-' + date.split('-')[1],
-        # edate: '-'.join(date.split('-')[0:2],
-        # elems: "mly_max_maxt,mly_min_mint",
-        # }
-        #The function to make call the ACIS
         data = callASIC(input_dict)
 
         if data is None:
           date_collected.append('NSF')
           maxt.append('NSF')
+          maxt_miss.append('NSF')
           mint.append('NSF')
+          mint_miss.append('NSF')
           avgT.append('NSF')
+          avgT_miss.append('NSF')
           pcpn.append('NSF')
+          pcpn_miss.append('NSF')
           mly_id.append('NSF')
           iDigBio.append(iDigBioUUID)
           yearCol.append('NSF')
@@ -336,12 +373,29 @@ def retDailyData(nearestStations, stationDates, distance):
   countArray = -1
   for uid, date, jdate, day, closest in zip(nearestStations['1_CWSs'], nearestStations['concatDate'], 
     nearestStations['julianDate'], nearestStations['day'], cws_list):
-
     countArray += 1
     countIndex = 0
+    if np.isnan(uid):
+      date_collected.append('NSF')
+      maxt.append('NSF')
+      mint.append('NSF')
+      avgT.append('NSF')
+      pcpn.append('NSF')
+      dly_id.append('NSF')
+      dis.append('NSF')
+      countIndex +=1
+      continue
     for index, z in enumerate(closest):
       if math.isnan(z):
-        continue
+        date_collected.append('NSF')
+        maxt.append('NSF')
+        mint.append('NSF')
+        avgT.append('NSF')
+        pcpn.append('NSF')
+        dly_id.append('NSF')
+        dis.append('NSF')
+        countIndex +=1
+        break
       #print index,  "\t", start.get(z), "\t", jdate, "\t", end.get(z), "\t", close, "\t", z
       if day == 0 or day == '' or day == 00:
         print 'Dly IC', uid, date
@@ -352,6 +406,16 @@ def retDailyData(nearestStations, stationDates, distance):
         pcpn.append('IC')
         dis.append('IC')
         dly_id.append(z)
+        countIndex +=1
+        break 
+      if np.isnan(z):
+        date_collected.append('NSF')
+        maxt.append('NSF')
+        mint.append('NSF')
+        avgT.append('NSF')
+        pcpn.append('NSF')
+        dly_id.append('NSF')
+        dis.append('NSF')
         countIndex +=1
         break
       elif stationDates[z]['Julianstartofoperation'] < jdate and jdate < stationDates[z]['Julianendofoperation']:

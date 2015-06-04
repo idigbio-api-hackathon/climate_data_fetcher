@@ -33,8 +33,11 @@ def main ():
             print 'Completed climate fetchering for file', checkInputFiletoOutfile
             continue
 
-        stateList = ["CT","RI", "MA", "ME", "NY", "VT", "NH"]
+
+        stateList = ['AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO',
+        'MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY']
         # stateList = ["RI"]
+
         nearestN, distance, weatherStationsMetaData = nearestNeighborsSetup(filename=filename, stateList=stateList)
 
         daily = retDailyData(nearestStations=nearestN, 
@@ -49,7 +52,7 @@ def main ():
             monthly=monthly, 
             nearestStations=nearestN)
 
-        print dailyMonthlyResult.to_json(orient='index')
+        # print dailyMonthlyResult.to_json(orient='index')
 
         pathName = 'output/' + checkInputFiletoOutfile[:-4] + '_Daily_Monthly.csv'
         dailyMonthlyResult.to_csv(pathName, index=False)
@@ -57,7 +60,7 @@ def main ():
         yearlyResult = retYearlyData(nearestStations=nearestN, 
             stationDates=weatherStationsMetaData, 
             distance=distance)
-        
+
         pathName = 'output/' + checkInputFiletoOutfile[:-4] + '_Yearly.csv'
         yearlyResult.to_csv(pathName, index=False)
 
